@@ -1,33 +1,18 @@
 import { describe, expect, test } from "bun:test";
 import { Lexer } from "./Lexer";
 import { TokenType } from "./Token";
+import { expectToken } from "./test-utils";
 
 describe("Lexer", () => {
   test("tokenizes a simple SELECT statement", () => {
     const sql = "SELECT users;";
-
     const lexer = new Lexer(sql);
-
     const tokens = lexer.tokenize();
-
-    expect(tokens).toEqual([
-      {
-        type: TokenType.Keyword,
-        value: "SELECT",
-      },
-      {
-        type: TokenType.Identifier,
-        value: "users",
-      },
-      {
-        type: TokenType.Semicolon,
-        value: ";",
-      },
-      {
-        type: TokenType.EOF,
-        value: "",
-      },
-    ]);
+    
+    expectToken(tokens[0], TokenType.Keyword, "SELECT");
+    expectToken(tokens[1], TokenType.Identifier, "users");
+    expectToken(tokens[2], TokenType.Semicolon, ";");
+    expectToken(tokens[3], TokenType.EOF, "");
   });
 
   test("tokenizes SELECT FROM statement", () => {
@@ -36,31 +21,11 @@ describe("Lexer", () => {
     const lexer = new Lexer(sql);
     const tokens = lexer.tokenize();
 
-    expect(tokens).toEqual([
-      {
-        type: TokenType.Keyword,
-        value: "SELECT",
-      },
-      {
-        type: TokenType.Identifier,
-        value: "users",
-      },
-      {
-        type: TokenType.Keyword,
-        value: "FROM",
-      },
-      {
-        type: TokenType.Identifier,
-        value: "accounts",
-      },
-      {
-        type: TokenType.Semicolon,
-        value: ";",
-      },
-      {
-        type: TokenType.EOF,
-        value: "",
-      },
-    ]);
+    expectToken(tokens[0], TokenType.Keyword, "SELECT");
+    expectToken(tokens[1], TokenType.Identifier, "users");
+    expectToken(tokens[2], TokenType.Keyword, "FROM");
+    expectToken(tokens[3], TokenType.Identifier, "accounts");
+    expectToken(tokens[4], TokenType.Semicolon, ";");
+    expectToken(tokens[5], TokenType.EOF, "");
   });
 });
