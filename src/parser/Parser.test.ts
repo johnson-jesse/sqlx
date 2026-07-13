@@ -105,4 +105,23 @@ describe("Parser", () => {
       },
     });
   });
+
+  test("parses DELETE statement", () => {
+    const sql = "DELETE FROM users WHERE age < 18;";
+
+    const tokens = new Lexer(sql).tokenize();
+
+    const ast = new Parser(tokens).parse();
+
+    expect(ast).toEqual({
+      type: "DeleteStatement",
+      table: "users",
+      where: {
+        type: "BinaryExpression",
+        left: "age",
+        operator: "<",
+        right: 18,
+      },
+    });
+  });
 });

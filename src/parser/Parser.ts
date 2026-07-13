@@ -2,6 +2,7 @@ import { TokenType, type Token } from "../lexer/Token";
 import type {
   Assignment,
   CreateTableStatement,
+  DeleteStatement,
   InsertStatement,
   SelectStatement,
   Statement,
@@ -34,6 +35,8 @@ export class Parser {
         return this.parseCreateTable();
       case "UPDATE":
         return this.parseUpdate();
+      case "DELETE":
+        return this.parseDelete();
       default:
         throw new Error(`Unknown statement ${token.value}`);
     }
@@ -258,6 +261,26 @@ export class Parser {
     return {
       column,
       value,
+    };
+  }
+
+  private parseDelete(): DeleteStatement {
+    this.stream.expectKeyword("DELETE");
+    this.stream.expectKeyword("FROM");
+
+    const table = this.stream.expectIdentifier();
+
+    let where;
+
+    if (this.stream.current().value === "WHERE") {
+      this.stream.expectKeyword("WHERE");
+      where = this.parseExpression();
+    }
+
+    return {
+      type: "DeleteStatement",
+      table,
+      where,
     };
   }
 }

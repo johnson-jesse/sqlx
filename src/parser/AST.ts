@@ -36,8 +36,15 @@ export interface UpdateStatement {
   where?: BinaryExpression;
 }
 
+export interface DeleteStatement {
+  type: "DeleteStatement";
+  table: string;
+  where?: BinaryExpression;
+}
+
 export type Statement =
   | SelectStatement
   | InsertStatement
   | CreateTableStatement
-  | UpdateStatement;
+  | UpdateStatement
+  | DeleteStatement;

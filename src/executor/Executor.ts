@@ -1,5 +1,6 @@
 import type {
   CreateTableStatement,
+  DeleteStatement,
   InsertStatement,
   SelectStatement,
   Statement,
@@ -27,6 +28,9 @@ export class Executor {
 
       case "UpdateStatement":
         return this.executeUpdate(statement);
+
+      case "DeleteStatement":
+        return this.executeDelete(statement);
 
       default:
         throw new Error(`Unsupported statement`);
@@ -107,6 +111,24 @@ export class Executor {
 
     return {
       updated,
+    };
+  }
+
+  private executeDelete(statement: DeleteStatement) {
+    const table = this.db.getTable(statement.table);
+
+    const originalCount = table.rows.length;
+
+    if (!statement.where) {
+      table.rows = [];
+    } else {
+      table.rows = table.rows.filter(
+        (row) => !this.expressionEvaluator.evaluate(statement.where!, row),
+      );
+    }
+
+    return {
+      deleted: originalCount - table.rows.length,
     };
   }
 }
