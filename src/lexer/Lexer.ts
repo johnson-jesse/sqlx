@@ -36,6 +36,17 @@ export class Lexer {
         continue;
       }
 
+      // Asterisk
+      if (char === "*") {
+        tokens.push({
+          type: TokenType.Asterisk,
+          value: "*",
+        });
+
+        this.position++;
+        continue;
+      }
+
       throw new Error(`Unexpected character: ${char}`);
     }
 

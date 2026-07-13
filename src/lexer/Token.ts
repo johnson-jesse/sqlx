@@ -2,6 +2,7 @@ export enum TokenType {
   Keyword,
   Identifier,
   Semicolon,
+  Asterisk,
   EOF,
 }
 
