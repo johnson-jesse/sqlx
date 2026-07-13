@@ -1,9 +1,6 @@
 import { Lexer } from "./lexer/Lexer";
 
-const sql = `
-SELECT id, name
-FROM users;
-`;
+const sql = "SELECT users;";
 
 const lexer = new Lexer(sql);
 
