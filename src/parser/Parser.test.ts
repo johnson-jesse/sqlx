@@ -1,4 +1,4 @@
-import { test, expect, describe } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { Lexer } from "../lexer/Lexer";
 import { Parser } from "./Parser";
 
@@ -38,6 +38,20 @@ describe("Parser", () => {
         operator: ">",
         right: 18,
       },
+    });
+  });
+
+  test("parses INSERT statement", () => {
+    const sql = "INSERT INTO users VALUES (3, 'Charlie', 25);";
+
+    const tokens = new Lexer(sql).tokenize();
+
+    const ast = new Parser(tokens).parse();
+
+    expect(ast).toEqual({
+      type: "InsertStatement",
+      table: "users",
+      values: [3, "Charlie", 25],
     });
   });
 });

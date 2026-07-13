@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, test } from "bun:test";
 import { Lexer } from "./Lexer";
 import { TokenType } from "./Token";
 import { expectToken } from "./test-utils";
@@ -105,5 +105,24 @@ describe("Lexer", () => {
     expectToken(tokens[5], TokenType.Identifier, "name");
     expectToken(tokens[6], TokenType.Operator, "=");
     expectToken(tokens[7], TokenType.String, "Alice");
+  });
+
+  test("tokenizes INSERT statement", () => {
+    const lexer = new Lexer("INSERT INTO users VALUES (3, 'Charlie', 25);");
+
+    const tokens = lexer.tokenize();
+
+    expectToken(tokens[0], TokenType.Keyword, "INSERT");
+    expectToken(tokens[1], TokenType.Keyword, "INTO");
+    expectToken(tokens[2], TokenType.Identifier, "users");
+    expectToken(tokens[3], TokenType.Keyword, "VALUES");
+    expectToken(tokens[4], TokenType.LeftParen, "(");
+    expectToken(tokens[5], TokenType.Number, "3");
+    expectToken(tokens[6], TokenType.Comma, ",");
+    expectToken(tokens[7], TokenType.String, "Charlie");
+    expectToken(tokens[8], TokenType.Comma, ",");
+    expectToken(tokens[9], TokenType.Number, "25");
+    expectToken(tokens[10], TokenType.RightParen, ")");
+    expectToken(tokens[11], TokenType.Semicolon, ";");
   });
 });

@@ -69,6 +69,36 @@ export class Lexer {
         continue;
       }
 
+      if (char === "(") {
+        tokens.push({
+          type: TokenType.LeftParen,
+          value: "(",
+        });
+
+        this.position++;
+        continue;
+      }
+
+      if (char === ")") {
+        tokens.push({
+          type: TokenType.RightParen,
+          value: ")",
+        });
+
+        this.position++;
+        continue;
+      }
+
+      if (char === ",") {
+        tokens.push({
+          type: TokenType.Comma,
+          value: ",",
+        });
+
+        this.position++;
+        continue;
+      }
+
       throw new Error(`Unexpected character: ${char}`);
     }
 

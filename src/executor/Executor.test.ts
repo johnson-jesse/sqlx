@@ -9,18 +9,22 @@ test("executes SELECT with WHERE", () => {
   const db = new Database();
 
   db.addTable(
-    new Table("users", [
-      {
-        id: 1,
-        name: "Alice",
-        age: 30,
-      },
-      {
-        id: 2,
-        name: "Bob",
-        age: 15,
-      },
-    ]),
+    new Table(
+      "users",
+      ["id", "name", "age"],
+      [
+        {
+          id: 1,
+          name: "Alice",
+          age: 30,
+        },
+        {
+          id: 2,
+          name: "Bob",
+          age: 15,
+        },
+      ],
+    ),
   );
 
   const sql = "SELECT * FROM users WHERE age > 18;";

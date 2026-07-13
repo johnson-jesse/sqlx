@@ -1,13 +1,28 @@
 import { TokenType, type Token } from "../lexer/Token";
-import type { SelectStatement } from "./AST";
+import type { InsertStatement, SelectStatement, Statement } from "./AST";
 
 export class Parser {
   private position = 0;
 
   constructor(private tokens: Token[]) {}
 
-  parse(): SelectStatement {
-    return this.parseSelect();
+  parse(): Statement {
+    const token = this.current();
+
+    if (token.type !== TokenType.Keyword) {
+      throw new Error("Expected statement");
+    }
+
+    switch (token.value) {
+      case "SELECT":
+        return this.parseSelect();
+
+      case "INSERT":
+        return this.parseInsert();
+
+      default:
+        throw new Error(`Unknown statement ${token.value}`);
+    }
   }
 
   private parseSelect(): SelectStatement {
@@ -37,6 +52,39 @@ export class Parser {
     };
   }
 
+  private parseInsert(): InsertStatement {
+    this.expectKeyword("INSERT");
+    this.expectKeyword("INTO");
+
+    const table = this.expectIdentifier();
+
+    this.expectKeyword("VALUES");
+    this.expect(TokenType.LeftParen);
+
+    const values = this.parseValues();
+
+    this.expect(TokenType.RightParen);
+
+    return {
+      type: "InsertStatement",
+      table,
+      values,
+    };
+  }
+
+  private parseValues(): (string | number)[] {
+    const values: (string | number)[] = [];
+
+    values.push(this.parseLiteral());
+
+    while (this.current().type === TokenType.Comma) {
+      this.position++; // consume comma
+      values.push(this.parseLiteral());
+    }
+
+    return values;
+  }
+
   private parseColumns(): string[] {
     const columns: string[] = [];
 
@@ -55,25 +103,29 @@ export class Parser {
   }
 
   private expectKeyword(keyword: string) {
-    const token = this.current();
+    const token = this.expect(TokenType.Keyword);
 
-    if (token.type !== TokenType.Keyword || token.value !== keyword) {
+    if (token.value !== keyword) {
       throw new Error(`Expected ${keyword}, got ${token.value}`);
     }
-
-    this.position++;
   }
 
   private expectIdentifier(): string {
+    return this.expect(TokenType.Identifier).value;
+  }
+
+  private expect(type: TokenType): Token {
     const token = this.current();
 
-    if (token.type !== TokenType.Identifier) {
-      throw new Error(`Expected identifier, got ${token.value}`);
+    if (token.type !== type) {
+      throw new Error(
+        `Expected ${TokenType[type]}, got ${TokenType[token.type]}`,
+      );
     }
 
     this.position++;
 
-    return token.value;
+    return token;
   }
 
   private current(): Token {

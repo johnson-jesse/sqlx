@@ -1,11 +1,29 @@
+// export enum TokenType {
+//   Keyword,
+//   Identifier,
+//   Semicolon,
+//   Asterisk,
+//   Number,
+//   String,
+//   Operator,
+//   EOF,
+// }
+
 export enum TokenType {
   Keyword,
   Identifier,
   Semicolon,
   Asterisk,
+
   Number,
   String,
+
   Operator,
+
+  LeftParen,
+  RightParen,
+  Comma,
+
   EOF,
 }
 

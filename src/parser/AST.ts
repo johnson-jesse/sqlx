@@ -5,6 +5,12 @@ export interface SelectStatement {
   where?: BinaryExpression;
 }
 
+export interface InsertStatement {
+  type: "InsertStatement";
+  table: string;
+  values: (string | number)[];
+}
+
 export interface BinaryExpression {
   type: "BinaryExpression";
   left: string;
@@ -12,4 +18,4 @@ export interface BinaryExpression {
   right: string | number;
 }
 
-export type Statement = SelectStatement;
+export type Statement = SelectStatement | InsertStatement;
