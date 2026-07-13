@@ -4,6 +4,7 @@ import { Parser } from "../parser/Parser";
 import { Database } from "../storage/Database";
 import { Table } from "../storage/Table";
 import { Executor } from "./Executor";
+import { SqlEngine } from "../engine/SqlEngine";
 
 describe("Executor", () => {
   test("executes SELECT with WHERE", () => {
@@ -79,6 +80,48 @@ describe("Executor", () => {
         age: 30,
       },
       {
+        name: "Bob",
+        age: 15,
+      },
+    ]);
+  });
+
+  test("updates matching rows", () => {
+    const db = new Database();
+
+    db.addTable(
+      new Table(
+        "users",
+        ["id", "name", "age"],
+        [
+          {
+            id: 1,
+            name: "Alice",
+            age: 30,
+          },
+          {
+            id: 2,
+            name: "Bob",
+            age: 15,
+          },
+        ],
+      ),
+    );
+
+    const engine = SqlEngine.start(db);
+
+    engine.consume("UPDATE users SET age = 31 WHERE name = 'Alice';");
+
+    const result = engine.consume("SELECT * FROM users;");
+
+    expect(result).toEqual([
+      {
+        id: 1,
+        name: "Alice",
+        age: 31,
+      },
+      {
+        id: 2,
         name: "Bob",
         age: 15,
       },

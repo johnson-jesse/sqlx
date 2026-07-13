@@ -80,4 +80,29 @@ describe("Parser", () => {
       columns: ["id", "name", "age"],
     });
   });
+
+  test("parses UPDATE statement", () => {
+    const sql = "UPDATE users SET age = 31 WHERE name = 'Alice';";
+
+    const tokens = new Lexer(sql).tokenize();
+
+    const ast = new Parser(tokens).parse();
+
+    expect(ast).toEqual({
+      type: "UpdateStatement",
+      table: "users",
+      assignments: [
+        {
+          column: "age",
+          value: 31,
+        },
+      ],
+      where: {
+        type: "BinaryExpression",
+        left: "name",
+        operator: "=",
+        right: "Alice",
+      },
+    });
+  });
 });

@@ -1,9 +1,11 @@
 import { TokenType, type Token } from "../lexer/Token";
 import type {
+  Assignment,
   CreateTableStatement,
   InsertStatement,
   SelectStatement,
   Statement,
+  UpdateStatement,
 } from "./AST";
 import { TokenStream } from "./TokenStream";
 
@@ -30,6 +32,8 @@ export class Parser {
 
       case "CREATE":
         return this.parseCreateTable();
+      case "UPDATE":
+        return this.parseUpdate();
       default:
         throw new Error(`Unknown statement ${token.value}`);
     }
@@ -205,5 +209,55 @@ export class Parser {
     }
 
     return identifiers;
+  }
+
+  private parseUpdate(): UpdateStatement {
+    this.stream.expectKeyword("UPDATE");
+
+    const table = this.stream.expectIdentifier();
+
+    this.stream.expectKeyword("SET");
+
+    const assignments = this.parseAssignments();
+
+    let where;
+
+    if (this.stream.current().value === "WHERE") {
+      this.stream.expectKeyword("WHERE");
+      where = this.parseExpression();
+    }
+
+    return {
+      type: "UpdateStatement",
+      table,
+      assignments,
+      where,
+    };
+  }
+
+  private parseAssignments(): Assignment[] {
+    const assignments: Assignment[] = [];
+
+    assignments.push(this.parseAssignment());
+
+    while (this.stream.current().type === TokenType.Comma) {
+      this.stream.expect(TokenType.Comma);
+      assignments.push(this.parseAssignment());
+    }
+
+    return assignments;
+  }
+
+  private parseAssignment(): Assignment {
+    const column = this.stream.expectIdentifier();
+
+    this.stream.expect(TokenType.Operator);
+
+    const value = this.parseLiteral();
+
+    return {
+      column,
+      value,
+    };
   }
 }

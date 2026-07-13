@@ -24,4 +24,20 @@ export interface BinaryExpression {
   right: string | number;
 }
 
-export type Statement = SelectStatement | InsertStatement | CreateTableStatement;
+export interface Assignment {
+  column: string;
+  value: string | number;
+}
+
+export interface UpdateStatement {
+  type: "UpdateStatement";
+  table: string;
+  assignments: Assignment[];
+  where?: BinaryExpression;
+}
+
+export type Statement =
+  | SelectStatement
+  | InsertStatement
+  | CreateTableStatement
+  | UpdateStatement;

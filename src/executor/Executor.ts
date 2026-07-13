@@ -3,6 +3,7 @@ import type {
   InsertStatement,
   SelectStatement,
   Statement,
+  UpdateStatement,
 } from "../parser/AST";
 import { ExpressionEvaluator } from "../runtime/ExpressionEvaluator";
 import { Database } from "../storage/Database";
@@ -23,6 +24,9 @@ export class Executor {
 
       case "CreateTableStatement":
         return this.executeCreateTable(statement);
+
+      case "UpdateStatement":
+        return this.executeUpdate(statement);
 
       default:
         throw new Error(`Unsupported statement`);
@@ -78,6 +82,31 @@ export class Executor {
 
     return {
       success: true,
+    };
+  }
+
+  private executeUpdate(statement: UpdateStatement) {
+    const table = this.db.getTable(statement.table);
+
+    let updated = 0;
+
+    for (const row of table.rows) {
+      if (
+        statement.where &&
+        !this.expressionEvaluator.evaluate(statement.where, row)
+      ) {
+        continue;
+      }
+
+      for (const assignment of statement.assignments) {
+        row[assignment.column] = assignment.value;
+      }
+
+      updated++;
+    }
+
+    return {
+      updated,
     };
   }
 }
