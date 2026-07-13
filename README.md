@@ -1,5 +1,8 @@
 # sqlx
 
+A study in SQL design through Lexing (tokenization), Parsing, AST design, Query planning, Execution engines, Storage, Indexes (eventually), and SQL semantics
+
+
 To install dependencies:
 
 ```bash
