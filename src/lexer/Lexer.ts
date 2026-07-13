@@ -25,6 +25,12 @@ export class Lexer {
         continue;
       }
 
+      // Numbers
+      if (/[0-9]/.test(char)) {
+        tokens.push(this.readNumber());
+        continue;
+      }
+
       // Semicolon
       if (char === ";") {
         tokens.push({
@@ -41,6 +47,17 @@ export class Lexer {
         tokens.push({
           type: TokenType.Asterisk,
           value: "*",
+        });
+
+        this.position++;
+        continue;
+      }
+
+      // Operators
+      if (["=", ">", "<"].includes(char)) {
+        tokens.push({
+          type: TokenType.Operator,
+          value: char,
         });
 
         this.position++;
@@ -84,6 +101,23 @@ export class Lexer {
     return {
       type: TokenType.Identifier,
       value: word,
+    };
+  }
+
+  private readNumber(): Token {
+    let number = "";
+
+    while (this.position < this.input.length) {
+      const char = this.input[this.position];
+      if (!char || !/[0-9]/.test(char)) break;
+
+      number += char;
+      this.position++;
+    }
+
+    return {
+      type: TokenType.Number,
+      value: number,
     };
   }
 }

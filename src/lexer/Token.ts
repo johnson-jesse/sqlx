@@ -3,6 +3,8 @@ export enum TokenType {
   Identifier,
   Semicolon,
   Asterisk,
+  Number,
+  Operator,
   EOF,
 }
 
@@ -14,4 +16,10 @@ export interface Token {
 export const keywords = new Set([
   "SELECT",
   "FROM",
+  "WHERE",
+  "INSERT",
+  "INTO",
+  "VALUES",
+  "UPDATE",
+  "DELETE",
 ]);
