@@ -28,4 +28,10 @@ const tokens = lexer.tokenize();
 const parser = new Parser(tokens);
 const ast = parser.parse();
 
-console.log(JSON.stringify(ast, null, 2));
+import { Executor } from "./executor/Executor";
+
+const executor = new Executor(db);
+
+const result = executor.execute(ast);
+
+console.log(result);
