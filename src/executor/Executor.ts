@@ -1,10 +1,12 @@
 import type {
+  CreateTableStatement,
   InsertStatement,
   SelectStatement,
   Statement,
 } from "../parser/AST";
 import { ExpressionEvaluator } from "../runtime/ExpressionEvaluator";
 import { Database } from "../storage/Database";
+import { Table } from "../storage/Table";
 
 export class Executor {
   private expressionEvaluator = new ExpressionEvaluator();
@@ -18,6 +20,9 @@ export class Executor {
 
       case "InsertStatement":
         return this.executeInsert(statement);
+
+      case "CreateTableStatement":
+        return this.executeCreateTable(statement);
 
       default:
         throw new Error(`Unsupported statement`);
@@ -66,5 +71,13 @@ export class Executor {
     table.rows.push(row);
 
     return row;
+  }
+
+  private executeCreateTable(statement: CreateTableStatement) {
+    this.db.addTable(new Table(statement.table, statement.columns, []));
+
+    return {
+      success: true,
+    };
   }
 }

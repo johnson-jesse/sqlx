@@ -41,4 +41,6 @@ export const keywords = new Set([
   "VALUES",
   "UPDATE",
   "DELETE",
+  "CREATE",
+  "TABLE",
 ]);

@@ -67,4 +67,17 @@ describe("Parser", () => {
       table: "users",
     });
   });
+
+  test("parses CREATE TABLE statement", () => {
+    const sql = "CREATE TABLE users (id, name, age);";
+
+    const tokens = new Lexer(sql).tokenize();
+    const ast = new Parser(tokens).parse();
+
+    expect(ast).toEqual({
+      type: "CreateTableStatement",
+      table: "users",
+      columns: ["id", "name", "age"],
+    });
+  });
 });

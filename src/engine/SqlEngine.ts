@@ -4,20 +4,19 @@ import { Parser } from "../parser/Parser";
 import type { Database } from "../storage/Database";
 
 export class SqlEngine {
-  private constructor(private db: Database) {}
+  private constructor(private executor: Executor) {}
 
-  public static start(db: Database) {
-    return new SqlEngine(db);
+  static start(db: Database) {
+    return new SqlEngine(new Executor(db));
   }
 
-  read(sql: string) {
+  consume(sql: string) {
     const lexer = new Lexer(sql);
     const tokens = lexer.tokenize();
 
     const parser = new Parser(tokens);
-    const ast = parser.parse();
-    const executor = new Executor(this.db);
-    
-    return executor.execute(ast);
+    const statement = parser.parse();
+
+    return this.executor.execute(statement);
   }
 }

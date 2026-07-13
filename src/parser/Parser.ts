@@ -1,5 +1,10 @@
 import { TokenType, type Token } from "../lexer/Token";
-import type { InsertStatement, SelectStatement, Statement } from "./AST";
+import type {
+  CreateTableStatement,
+  InsertStatement,
+  SelectStatement,
+  Statement,
+} from "./AST";
 import { TokenStream } from "./TokenStream";
 
 export class Parser {
@@ -23,6 +28,8 @@ export class Parser {
       case "INSERT":
         return this.parseInsert();
 
+      case "CREATE":
+        return this.parseCreateTable();
       default:
         throw new Error(`Unknown statement ${token.value}`);
     }
@@ -72,6 +79,25 @@ export class Parser {
       type: "InsertStatement",
       table,
       values,
+    };
+  }
+
+  private parseCreateTable(): CreateTableStatement {
+    this.stream.expectKeyword("CREATE");
+    this.stream.expectKeyword("TABLE");
+
+    const table = this.stream.expectIdentifier();
+
+    this.stream.expect(TokenType.LeftParen);
+
+    const columns = this.parseIdentifiers();
+
+    this.stream.expect(TokenType.RightParen);
+
+    return {
+      type: "CreateTableStatement",
+      table,
+      columns,
     };
   }
 
@@ -166,5 +192,18 @@ export class Parser {
       operator: operator.value,
       right: this.parseLiteral(),
     };
+  }
+
+  private parseIdentifiers(): string[] {
+    const identifiers: string[] = [];
+
+    identifiers.push(this.stream.expectIdentifier());
+
+    while (this.stream.current().type === TokenType.Comma) {
+      this.stream.expect(TokenType.Comma);
+      identifiers.push(this.stream.expectIdentifier());
+    }
+
+    return identifiers;
   }
 }

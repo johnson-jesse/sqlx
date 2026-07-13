@@ -11,6 +11,12 @@ export interface InsertStatement {
   values: (string | number)[];
 }
 
+export interface CreateTableStatement {
+  type: "CreateTableStatement";
+  table: string;
+  columns: string[];
+}
+
 export interface BinaryExpression {
   type: "BinaryExpression";
   left: string;
@@ -18,4 +24,4 @@ export interface BinaryExpression {
   right: string | number;
 }
 
-export type Statement = SelectStatement | InsertStatement;
+export type Statement = SelectStatement | InsertStatement | CreateTableStatement;
