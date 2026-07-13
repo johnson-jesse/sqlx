@@ -9,3 +9,8 @@ export interface Token {
   type: TokenType;
   value: string;
 }
+
+export const keywords = new Set([
+  "SELECT",
+  "FROM",
+]);

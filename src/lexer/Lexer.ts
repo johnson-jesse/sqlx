@@ -1,4 +1,4 @@
-import { TokenType, type Token } from "./Token";
+import { keywords, TokenType, type Token } from "./Token";
 
 export class Lexer {
   private position = 0;
@@ -63,7 +63,7 @@ export class Lexer {
 
     const upper = word.toUpperCase();
 
-    if (upper === "SELECT") {
+    if (keywords.has(upper)) {
       return {
         type: TokenType.Keyword,
         value: upper,
