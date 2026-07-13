@@ -54,4 +54,17 @@ describe("Parser", () => {
       values: [3, "Charlie", 25],
     });
   });
+
+  test("parses SELECT with multiple columns", () => {
+    const sql = "SELECT id, name FROM users;";
+
+    const tokens = new Lexer(sql).tokenize();
+    const ast = new Parser(tokens).parse();
+
+    expect(ast).toEqual({
+      type: "SelectStatement",
+      columns: ["id", "name"],
+      table: "users",
+    });
+  });
 });

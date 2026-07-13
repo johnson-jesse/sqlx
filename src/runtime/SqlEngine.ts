@@ -1,7 +1,7 @@
-import { Executor } from "./executor/Executor";
-import { Lexer } from "./lexer/Lexer";
-import { Parser } from "./parser/Parser";
-import type { Database } from "./storage/Database";
+import { Executor } from "../executor/Executor";
+import { Lexer } from "../lexer/Lexer";
+import { Parser } from "../parser/Parser";
+import type { Database } from "../storage/Database";
 
 export class SqlEngine {
   private constructor(private db: Database) {}

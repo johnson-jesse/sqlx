@@ -1,13 +1,16 @@
 import { TokenType, type Token } from "../lexer/Token";
 import type { InsertStatement, SelectStatement, Statement } from "./AST";
+import { TokenStream } from "./TokenStream";
 
 export class Parser {
-  private position = 0;
+  private stream: TokenStream;
 
-  constructor(private tokens: Token[]) {}
+  constructor(private tokens: Token[]) {
+    this.stream = new TokenStream(tokens);
+  }
 
   parse(): Statement {
-    const token = this.current();
+    const token = this.stream.current();
 
     if (token.type !== TokenType.Keyword) {
       throw new Error("Expected statement");
@@ -37,10 +40,10 @@ export class Parser {
     let where;
 
     if (
-      this.current().type === TokenType.Keyword &&
-      this.current().value === "WHERE"
+      this.stream.current().type === TokenType.Keyword &&
+      this.stream.current().value === "WHERE"
     ) {
-      this.position++;
+      this.stream.advance();
       where = this.parseExpression();
     }
 
@@ -77,8 +80,8 @@ export class Parser {
 
     values.push(this.parseLiteral());
 
-    while (this.current().type === TokenType.Comma) {
-      this.position++; // consume comma
+    while (this.stream.current().type === TokenType.Comma) {
+      this.stream.advance(); // consume comma
       values.push(this.parseLiteral());
     }
 
@@ -86,17 +89,18 @@ export class Parser {
   }
 
   private parseColumns(): string[] {
-    const columns: string[] = [];
-
-    if (this.current().type === TokenType.Asterisk) {
-      columns.push("*");
-      this.position++;
-      return columns;
+    if (this.stream.current().type === TokenType.Asterisk) {
+      this.stream.advance();
+      return ["*"];
     }
 
-    while (this.current().type === TokenType.Identifier) {
-      columns.push(this.current().value);
-      this.position++;
+    const columns: string[] = [];
+
+    columns.push(this.expectIdentifier());
+
+    while (this.stream.current().type === TokenType.Comma) {
+      this.stream.advance(); // consume comma
+      columns.push(this.expectIdentifier());
     }
 
     return columns;
@@ -115,7 +119,7 @@ export class Parser {
   }
 
   private expect(type: TokenType): Token {
-    const token = this.current();
+    const token = this.stream.current();
 
     if (token.type !== type) {
       throw new Error(
@@ -123,35 +127,21 @@ export class Parser {
       );
     }
 
-    this.position++;
-
-    return token;
-  }
-
-  private current(): Token {
-    return this.peek(0);
-  }
-
-  private peek(offset: number): Token {
-    const token = this.tokens[this.position + offset];
-
-    if (!token) {
-      throw new Error("Unexpected end of input");
-    }
+    this.stream.advance();
 
     return token;
   }
 
   private parseLiteral(): string | number {
-    const token = this.current();
+    const token = this.stream.current();
 
     switch (token.type) {
       case TokenType.Number:
-        this.position++;
+        this.stream.advance();
         return Number(token.value);
 
       case TokenType.String:
-        this.position++;
+        this.stream.advance();
         return token.value;
 
       default:
@@ -162,13 +152,13 @@ export class Parser {
   private parseExpression() {
     const left = this.expectIdentifier();
 
-    const operator = this.current();
+    const operator = this.stream.current();
 
     if (operator.type !== TokenType.Operator) {
       throw new Error(`Expected operator, got ${operator.value}`);
     }
 
-    this.position++;
+    this.stream.advance();
 
     return {
       type: "BinaryExpression" as const,

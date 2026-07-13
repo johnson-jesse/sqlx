@@ -1,4 +1,4 @@
-import { SqlEngine } from "./SqlEngine";
+import { SqlEngine } from "./runtime/SqlEngine";
 import { Database } from "./storage/Database";
 import { Table } from "./storage/Table";
 
@@ -23,5 +23,6 @@ db.addTable(
   ),
 );
 
-const sql = "SELECT * FROM users WHERE age > 14;";
-console.log(SqlEngine.start(db).read(sql));
+const engine = SqlEngine.start(db)
+engine.read("INSERT INTO users VALUES (3, 'Charlie', 25);")
+console.log(engine.read("SELECT * FROM users WHERE age > 14;"));
