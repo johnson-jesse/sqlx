@@ -82,4 +82,28 @@ describe("Lexer", () => {
     expectToken(tokens[8], TokenType.Semicolon, ";");
     expectToken(tokens[9], TokenType.EOF, "");
   });
+
+  test("tokenizes string literal", () => {
+    const lexer = new Lexer("'Alice'");
+
+    const tokens = lexer.tokenize();
+
+    expectToken(tokens[0], TokenType.String, "Alice");
+    expectToken(tokens[1], TokenType.EOF, "");
+  });
+
+  test("tokenizes WHERE with string", () => {
+    const lexer = new Lexer("SELECT * FROM users WHERE name = 'Alice';");
+
+    const tokens = lexer.tokenize();
+
+    expectToken(tokens[0], TokenType.Keyword, "SELECT");
+    expectToken(tokens[1], TokenType.Asterisk, "*");
+    expectToken(tokens[2], TokenType.Keyword, "FROM");
+    expectToken(tokens[3], TokenType.Identifier, "users");
+    expectToken(tokens[4], TokenType.Keyword, "WHERE");
+    expectToken(tokens[5], TokenType.Identifier, "name");
+    expectToken(tokens[6], TokenType.Operator, "=");
+    expectToken(tokens[7], TokenType.String, "Alice");
+  });
 });

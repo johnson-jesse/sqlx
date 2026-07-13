@@ -1,6 +1,6 @@
 # sqlx
 
-A study in SQL design through Lexing (tokenization), Parsing, AST design, Query planning, Execution engines, Storage, Indexes (eventually), and SQL semantics
+A study in SQL design through Lexing (tokenization), Parsing, AST design, Query planning, Execution engines, Storage, Indexes, and SQL semantics
 
 
 To install dependencies:

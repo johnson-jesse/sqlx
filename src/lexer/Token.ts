@@ -4,6 +4,7 @@ export enum TokenType {
   Semicolon,
   Asterisk,
   Number,
+  String,
   Operator,
   EOF,
 }

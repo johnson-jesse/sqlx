@@ -64,6 +64,11 @@ export class Lexer {
         continue;
       }
 
+      if (char === "'") {
+        tokens.push(this.readString());
+        continue;
+      }
+
       throw new Error(`Unexpected character: ${char}`);
     }
 
@@ -118,6 +123,33 @@ export class Lexer {
     return {
       type: TokenType.Number,
       value: number,
+    };
+  }
+
+  private readString(): Token {
+    // Skip opening quote
+    this.position++;
+
+    let value = "";
+
+    while (
+      this.position < this.input.length &&
+      this.input[this.position] !== "'"
+    ) {
+      value += this.input[this.position];
+      this.position++;
+    }
+
+    if (this.position >= this.input.length) {
+      throw new Error("Unterminated string literal");
+    }
+
+    // Skip closing quote
+    this.position++;
+
+    return {
+      type: TokenType.String,
+      value,
     };
   }
 }

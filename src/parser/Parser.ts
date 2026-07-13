@@ -90,6 +90,23 @@ export class Parser {
     return token;
   }
 
+  private parseLiteral(): string | number {
+    const token = this.current();
+
+    switch (token.type) {
+      case TokenType.Number:
+        this.position++;
+        return Number(token.value);
+
+      case TokenType.String:
+        this.position++;
+        return token.value;
+
+      default:
+        throw new Error(`Expected literal, got ${token.value}`);
+    }
+  }
+
   private parseExpression() {
     const left = this.expectIdentifier();
 
@@ -101,19 +118,11 @@ export class Parser {
 
     this.position++;
 
-    const right = this.current();
-
-    if (right.type !== TokenType.Number) {
-      throw new Error(`Expected number, got ${right.value}`);
-    }
-
-    this.position++;
-
     return {
       type: "BinaryExpression" as const,
       left,
       operator: operator.value,
-      right: Number(right.value),
+      right: this.parseLiteral(),
     };
   }
 }
