@@ -1,0 +1,16 @@
+{
+  "name": "sqlx",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": { 
+    "start": "bun run src/cli.ts",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
